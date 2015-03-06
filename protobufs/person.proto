@@ -1,0 +1,24 @@
+package tutorial;
+
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+
+  enum PhoneType {
+    Mobile = 0;
+    Home = 1;
+    Work = 2;
+  }
+
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2 [ default = Home ];
+  }
+
+  repeated PhoneNumber phone = 4;
+}
+
+message AddressBook {
+  repeated Person person = 1;
+}
