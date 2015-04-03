@@ -1,0 +1,5 @@
+#!/bin/sh
+
+echo $$ > /sys/kernel/debug/tracing/set_ftrace_pid
+echo function_graph > /sys/kernel/debug/tracing/current_tracer
+exec $*
