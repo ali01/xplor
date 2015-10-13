@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <array>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -653,10 +654,9 @@ TEST(Poll, Basic) {
 namespace enum_classes {
 
 enum class Flags : uint8_t {
-    FLAG_1 = 0,
-    FLAG_2 = 1,
-    FLAG_3 = 2,
-    FLAG_4 = 4,
+    FLAG_0 = 0,
+    FLAG_1 = 1,
+    FLAG_2 = 2,
 };
 
 Flags operator|(Flags lhs, Flags rhs) {
@@ -665,10 +665,57 @@ Flags operator|(Flags lhs, Flags rhs) {
 
 TEST(EnumClasses, Basic) {
     Flags flags = Flags::FLAG_1 | Flags::FLAG_2;
+    ASSERT_EQ(3, static_cast<uint8_t>(flags));
 }
 
 } // namespace enum_classes
 
+
+namespace array {
+
+TEST(Array, Basic) {
+    const int size = 10; // must be a constant expression
+    std::array<int,size> array; // array size determined at compile-time
+}
+
+void foo(std::array<int,1>& array) {
+    array[0] = 42;
+}
+
+TEST(Array, ValueSemantics) {
+    std::array<int,1> array = { 0 };
+    foo(array);
+    ASSERT_EQ(42, array[0]);
+}
+
+} // namespace array
+
+namespace polymorphic_references {
+
+struct A {
+    virtual int foo() = 0;
+};
+
+struct B : A {
+    B(int value) : m_value(value) {}
+
+    int foo() override {
+        return m_value;
+    }
+
+    int m_value;
+};
+
+TEST(PolymorphicReferences, Basic) {
+    B b(42);
+
+    A& a = b;
+
+    ASSERT_EQ(42, b.foo());
+    ASSERT_EQ(42, a.foo());
+}
+
+} // namespace polymorphic_references
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
